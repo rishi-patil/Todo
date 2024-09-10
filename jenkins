@@ -1,0 +1,70 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs 'NodeJS' // Ensure NodeJS is installed on Jenkins and configured
+    }
+
+    environment {
+        SONARQUBE_URL = 'http://localhost:9000'  // Update with your SonarQube URL if needed
+        SONARQUBE_TOKEN = credentials('sonar-token')  // The SonarQube authentication token set in Jenkins credentials
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out the code from GitHub...'
+                git branch: 'main', url: 'https://github.com/rishi-patil/Todo.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing dependencies...'
+                sh 'npm install' // Ensure package.json exists in the repo
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo 'Running unit tests...'
+                sh 'npm test' // Assumes tests are defined in package.json scripts
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Running SonarQube analysis...'
+                withSonarQubeEnv('sonarqube') { // 'Be' is the name of the SonarQube server configured in Jenkins
+                    sh 'npm run sonar' // Example: If SonarQube analysis command is in package.json script as `sonar`
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+                // Add deployment steps, e.g., `sh 'npm run deploy'`
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                echo 'Checking SonarQube Quality Gate...'
+                waitForQualityGate abortPipeline: true
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline completed.'
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
