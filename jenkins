@@ -21,14 +21,14 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing dependencies...'
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Run Tests') {
             steps {
                 echo 'Running unit tests...'
-                sh 'npm test'
+                bat 'npm test'
             }
         }
 
@@ -36,7 +36,7 @@ pipeline {
             steps {
                 echo 'Running SonarQube analysis...'
                 withSonarQubeEnv('sonarqube') {  // 'sonarqube' should match the name in Jenkins SonarQube configuration
-                    sh 'npm run sonar' // Ensure 'sonar' script is defined in package.json
+                    bat 'npm run sonar' // Ensure 'sonar' script is defined in package.json
                 }
             }
         }
