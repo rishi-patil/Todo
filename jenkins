@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS' // Ensure NodeJS is installed on Jenkins and configured
+        nodejs 'NodeJS' // Ensure NodeJS is installed and configured in Jenkins
     }
 
     environment {
         SONARQUBE_URL = 'http://localhost:9000'  // Update with your SonarQube URL if needed
-        SONARQUBE_TOKEN = credentials('sonar-token')  // The SonarQube authentication token set in Jenkins credentials
+        SONARQUBE_TOKEN = credentials('sonar-token')  // SonarQube token from Jenkins credentials
     }
 
     stages {
@@ -21,22 +21,22 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing dependencies...'
-                sh 'npm install' // Ensure package.json exists in the repo
+                sh 'npm install'
             }
         }
 
         stage('Run Tests') {
             steps {
                 echo 'Running unit tests...'
-                sh 'npm test' // Assumes tests are defined in package.json scripts
+                sh 'npm test'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
                 echo 'Running SonarQube analysis...'
-                withSonarQubeEnv('sonarqube') { // 'Be' is the name of the SonarQube server configured in Jenkins
-                    sh 'npm run sonar' // Example: If SonarQube analysis command is in package.json script as `sonar`
+                withSonarQubeEnv('sonarqube') {  // 'sonarqube' should match the name in Jenkins SonarQube configuration
+                    sh 'npm run sonar' // Ensure 'sonar' script is defined in package.json
                 }
             }
         }
@@ -44,7 +44,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying application...'
-                // Add deployment steps, e.g., `sh 'npm run deploy'`
+                // Add deployment steps here if necessary
             }
         }
 
