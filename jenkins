@@ -1,70 +1,39 @@
 pipeline {
-    agent any
-
-    tools {
-        nodejs 'NodeJS' // Ensure NodeJS is installed and configured in Jenkins
+  agent any
+  environment {
+    SONARQUBE = 'sonarqube' // Name of SonarQube configuration in Jenkins
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        git 'https://github.com/rishi-patil/Todo.git'
+      }
     }
-
-    environment {
-        SONARQUBE_URL = 'http://localhost:9000'  // Update with your SonarQube URL if needed
-        SONARQUBE_TOKEN = credentials('sonar-token')  // SonarQube token from Jenkins credentials
+    stage('Install Dependencies') {
+      steps {
+        script {
+          bat 'npm install'
+        }
+      }
     }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                echo 'Checking out the code from GitHub...'
-                git branch: 'main', url: 'https://github.com/rishi-patil/Todo.git'
-            }
+    stage('SonarQube Analysis') {
+      steps {
+        script {
+          withSonarQubeEnv('sonarqube') { // 'sonarqube' should match the SonarQube configuration name in Jenkins
+            bat 'npm run sonar'
+          }
         }
-
-        stage('Install Dependencies') {
-            steps {
-                echo 'Installing dependencies...'
-                bat 'npm install'
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                echo 'Running unit tests...'
-                bat 'npm test'
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                echo 'Running SonarQube analysis...'
-                withSonarQubeEnv('sonarqube') {  // 'sonarqube' should match the name in Jenkins SonarQube configuration
-                    bat 'npm run sonar' // Ensure 'sonar' script is defined in package.json
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo 'Deploying application...'
-                // Add deployment steps here if necessary
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                echo 'Checking SonarQube Quality Gate...'
-                waitForQualityGate abortPipeline: true
-            }
-        }
+      }
     }
-
-    post {
-        always {
-            echo 'Pipeline completed.'
+    stage('Quality Gate') {
+      steps {
+        script {
+          def qg = waitForQualityGate()
+          if (qg.status != 'OK') {
+            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+          }
         }
-        success {
-            echo 'Pipeline succeeded!'
-        }
-        failure {
-            echo 'Pipeline failed.'
-        }
+      }
     }
+  }
 }
