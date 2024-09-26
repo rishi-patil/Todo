@@ -15,20 +15,15 @@ app.use(express.static("public"));
 // const items = ["Buy Food", "Cook Food", "Eat Food"];
 // const workItems = [];
 
-mongoose.connect(
-  "mongodb+srv://rishipatil:4OsT8144KBp5sSkU@cluster0.ntmu6jb.mongodb.net/todolistDB"
-);
+// mongoose.connect(
+//   "mongodb+srv://rishipatil:4OsT8144KBp5sSkU@cluster0.ntmu6jb.mongodb.net/todolistDB"
+// );
 
 
 mongoose.connect(
   "mongodb+srv://rishipatil:4OsT8144KBp5sSkU@cluster0.ntmu6jb.mongodb.net/todolistDB"
 );
-// mongoose.connect(
-//   "mongodb+srv://rishipatil:4OsT8144KBp5sSkU@cluster0.ntmu6jb.mongodb.net/todolistDB"
-// );
-// mongoose.connect(
-//   "mongodb+srv://rishipatil:4OsT8144KBp5sSkU@cluster0.ntmu6jb.mongodb.net/todolistDB"
-// );
+
 
 const itemSchema = new mongoose.Schema({
   name: String,
