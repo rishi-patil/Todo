@@ -19,6 +19,17 @@ mongoose.connect(
   "mongodb+srv://rishipatil:4OsT8144KBp5sSkU@cluster0.ntmu6jb.mongodb.net/todolistDB"
 );
 
+
+mongoose.connect(
+  "mongodb+srv://rishipatil:4OsT8144KBp5sSkU@cluster0.ntmu6jb.mongodb.net/todolistDB"
+);
+// mongoose.connect(
+//   "mongodb+srv://rishipatil:4OsT8144KBp5sSkU@cluster0.ntmu6jb.mongodb.net/todolistDB"
+// );
+// mongoose.connect(
+//   "mongodb+srv://rishipatil:4OsT8144KBp5sSkU@cluster0.ntmu6jb.mongodb.net/todolistDB"
+// );
+
 const itemSchema = new mongoose.Schema({
   name: String,
 });
