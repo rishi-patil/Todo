@@ -1,4 +1,3 @@
-
 pipeline {
 	agent any
 	tools {
@@ -12,32 +11,34 @@ pipeline {
 	stages {
 		stage('Checkout Github'){
 			steps {
-				git branch: 'main',credentialsId: 'git-token', url: 'https://github.com/rishi-patil/Todo.git'
+				git branch: 'main', credentialsId: 'git-token', url: 'https://github.com/rishi-patil/Todo.git'
 			}
 		}
 
 		stage('Install node dependencies'){
 			steps {
-				sh 'npm install'
+				// Use 'bat' for Windows instead of 'sh'
+				bat 'npm install'
 			}
 		}
 		stage('Tests'){
 			steps {
-				sh 'npm test'
+				// Use 'bat' for running tests on Windows
+				bat 'npm test'
 			}
 		}
 		stage('SonarQube Analysis'){
 			steps {
 				withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-				   
 					withSonarQubeEnv('sonarqube') {
-						sh """
-                  				${SONAR_SCANNER_HOME}/bin/sonar-scanner \
-                  				-Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                    				-Dsonar.sources=. \
-                   				-Dsonar.host.url=http://localhost:9000 \
-                    				-Dsonar.login=${SONAR_TOKEN}
-                    				"""
+						// Replace shell (sh) commands with Windows batch script (bat) compatible syntax
+						bat """
+                  				${SONAR_SCANNER_HOME}\\bin\\sonar-scanner.bat ^
+                  				-Dsonar.projectKey=${SONAR_PROJECT_KEY} ^
+                   				-Dsonar.sources=. ^
+                   				-Dsonar.host.url=http://localhost:9000 ^
+                   				-Dsonar.login=%SONAR_TOKEN%
+                    		"""
 					}	
 				}
 			}
@@ -45,7 +46,7 @@ pipeline {
 	}
 	post {
 		success {
-			echo 'Build completed succesfully!'
+			echo 'Build completed successfully!'
 		}
 		failure {
 			echo 'Build failed. Check logs.'
