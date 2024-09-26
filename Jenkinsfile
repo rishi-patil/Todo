@@ -12,7 +12,7 @@ pipeline {
 	stages {
 		stage('Checkout Github'){
 			steps {
-				git branch: 'main', url: 'https://github.com/rishi-patil/Todo.git'
+				git branch: 'main',credentialsId: 'git-token', url: 'https://github.com/rishi-patil/Todo.git'
 			}
 		}
 
